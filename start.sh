@@ -1,20 +1,16 @@
 #!/bin/bash
 
-# Render keep-alive server
+# Render পোর্ট সচল রাখতে ব্যাকগ্রাউন্ড ডামি সার্ভার
 python3 -m http.server ${PORT:-10000} &
 
-# Purono context clean kora
-rm -rf /root/.hermes
+# ডিরেক্টরি সেটআপ
 mkdir -p /root/.hermes
 
-# Cloudflare Workers AI config (Direct OpenAI compatible format)
+# Hermes-এর নিজস্ব বিল্ট-ইন ফ্রি টায়ার কনফিগারেশন
 cat <<EOF > /root/.hermes/config.yaml
-model: @cf/meta/llama-3.1-70b-instruct
-provider: custom
-base_url: "https://api.cloudflare.com/client/v4/accounts/452d5a6fe120bd0b4eafdc2445b44b16/ai/v1"
-api_keys:
-  custom: "cfut_ZsB1BWuYssYP5jxv5DsySgjENWoeB4qCymjn8d7Gcb6c66e9"
+provider: nous
+model: hermes-3-llama-3.1-8b
 EOF
 
-# Hermes gateway run
+# গেটওয়ে রান করা
 exec hermes gateway run
