@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# মিসিং ডিপেন্ডেন্সি ইনস্টল করা
-pip install --no-cache-dir httpx[http2] discord.py
+# Render-এর পোর্ট স্ক্যান তৎক্ষণাৎ সফল করার জন্য ব্যাকগ্রাউন্ডে ওয়েব সার্ভার চালু রাখা
+python3 -m http.server ${PORT:-10000} &
 
-# পাইপ ব্রোকেন হওয়া ঠেকাতে nohup দিয়ে হার্মিস গেটওয়ে ব্যাকগ্রাউন্ডে রান রাখা
-nohup hermes gateway run > hermes.log 2>&1 &
+# প্রয়োজনীয় লাইব্রেরি ইনস্টল করা
+pip install --no-cache-dir "httpx[http2]" discord.py
 
-# রেন্ডারের পোর্ট স্ক্যান সন্তুষ্ট রাখার জন্য ওয়েব সার্ভার
-python3 -m http.server ${PORT:-10000}
+# গেটওয়ে চালু করা
+exec hermes gateway run
