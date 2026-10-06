@@ -1,18 +1,19 @@
 #!/bin/bash
 
-# Render-এর পোর্ট সচল রাখতে ডামি সার্ভার
+# Render-এর পোর্ট সচল রাখতে ব্যাকগ্রাউন্ড ডামি সার্ভার
 python3 -m http.server ${PORT:-10000} &
 
-# Hermes কনফিগ ডিরেক্টরি তৈরি
+# Hermes কনফিগ ফোল্ডার তৈরি
 mkdir -p /root/.hermes
 
-# কনফিগ ফাইলে সরাসরি OpenRouter এবং ফ্রি মডেল লিখে দেওয়া
+# Cloudflare Workers AI এর জন্য config.yaml ফাইল জেনারেট করা
 cat <<EOF > /root/.hermes/config.yaml
-model: meta-llama/llama-3.3-70b-instruct:free
-provider: openrouter
+model: @cf/meta/llama-3.1-70b-instruct
+provider: custom
+base_url: "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/v1"
 api_keys:
-  openrouter: "${OPENROUTER_API_KEY}"
+  custom: "${CLOUDFLARE_API_TOKEN}"
 EOF
 
-# গেটওয়ে রান করা
+# গেটওয়ে রান করা
 exec hermes gateway run
